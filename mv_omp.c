@@ -83,22 +83,28 @@ double *multiply_matrix_vector(double **A, double *v, double *w, int n, int m) {
 	}
 	return w;
 }
+double *multiply_matrix_vector_para(double **A, double *v, double *w, int m){
+	int k, i;
+	i = omp_get_thread_num();
+	w[i]=0.0;
+	for(k=0;k<m;k++) {
+		w[i] += A[i][k] * v[k];
+	}
+	return w;
+}
 int main(int argc, char** argv) {
 	int n=5;
 	double **A, *v, *ws, *wp, no;
-
-	A=make_matrix(n, m);
+	A=make_matrix(n, n);
 	v=make_vector(n);
 	ws=make_vector(n);
 	wp=make_vector(n);
 	A=fill_random_matrix(A, n, n);
 	v=fill_random_vector(v, n);
-	ws=multiply_matrix_vector(A, v, w, n, n);
+	ws=multiply_matrix_vector(A, v, ws, n, n);
+#	pragma omp parallel num_threads(n)	
+	wp=multiply_matrix_vector_para(A, v, wp, n);
 	no = norm(ws,wp,n);
 	printf("norm=%f\n",no);
-	print_vector(v,n);
-	print_matrix(A, n, n);
-	print_vector(ws,n);
-
 	return 0;
 }
