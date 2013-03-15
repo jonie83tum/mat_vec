@@ -121,7 +121,7 @@ int main(int argc, char** argv) {
 	if (rank != 0){
 		MPI_Send(&w_local, 1, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD);
 		}
-	// Alternative solution would be using  MPI_Gather
+	// Alternative solution would be using MPI_Gather or MPI_Reduce
 	free_vector(v);
 	free_vector(ws);
 	free_vector(wp);
