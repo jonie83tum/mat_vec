@@ -61,6 +61,7 @@ void multiply_matrix_vector(int n, double A[n][n], double *v, double *w) {
 	return;
 }
 int main(int argc, char** argv) {
+	MPI_Init(NULL, NULL);
 	int n=5, rank, size, k;
 	double *v, *ws, *wp, no, w_local=0;
 /*      Matrix A and vector v are to be muliplied
@@ -77,7 +78,6 @@ int main(int argc, char** argv) {
         fill_random_vector(v, n);
         multiply_matrix_vector(n, A, v, ws);
 	
-	MPI_Init(NULL, NULL);
 	MPI_Comm_size(MPI_COMM_WORLD, &size);
 	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 	if (size != n){
