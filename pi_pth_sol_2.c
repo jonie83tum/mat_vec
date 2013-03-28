@@ -4,8 +4,9 @@
 #define f(A) (4.0/(1.0+A*A))
 int n, thread_count, flag;
 double sum, w;
+pthread_mutex_t mutex;
 void* thread_sum(void *rank) {
-	// cast the void pointer back into integer	
+	
 	int *ranki = (int *) rank;	
 	int start = *ranki*n/thread_count;
 	int end = (*ranki+1)*n/thread_count;
@@ -18,10 +19,10 @@ void* thread_sum(void *rank) {
 		x = w*((double)i-0.5);
 		local_sum += f(x);
 	}
-	// update the global sum (critical section) using busy waiting 
-	while (flag != *ranki);
+	// update the global sum (critical section) using mutex 
+	pthread_mutex_lock(&mutex);
 	sum += local_sum;  
-	flag++;
+	pthread_mutex_unlock(&mutex);
 
 	return NULL;
 }
@@ -42,15 +43,14 @@ int main(int argc, char* argv[]) {
 	int *threads;
 	threads = (int *)malloc(thread_count*sizeof(int));
 	thread_handles = (pthread_t*) malloc (thread_count*sizeof(pthread_t)); 
-	
+	// initialize mutex
+	pthread_mutex_init(&mutex, NULL);
 	sum = 0.0;
 	flag = 0;
 
 	for (i = 0; i < thread_count; i++){  
 		threads[i] = i;
 		pthread_create(&thread_handles[i], NULL, thread_sum, (void*)&threads[i]);  
-		// Attention: If <(void*)&i> is passed to the start_routine instead of 
-		// <(void*)&threads[]> this result is a race condition!
 	}
 
 	for (i = 0; i < thread_count; i++){ 
