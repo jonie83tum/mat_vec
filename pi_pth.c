@@ -7,13 +7,7 @@ double sum, w;
 int main(int argc, char* argv[]) {
 	int i;
 	double pi, x;
-	thread_count = strtol(argv[1], NULL, 10);  
-	n = strtol(argv[2], NULL, 10);
-	// check whether command line arguments are correct
-	if (n % thread_count != 0){
-		printf("n has to be a multiple of the number of threads\n");
-		return 0;
-	}
+	n = strtol(argv[1], NULL, 10);
 
 	sum = 0.0;
 	
